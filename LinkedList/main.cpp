@@ -15,7 +15,8 @@ using namespace mds;
 
 int main(void)
 {
-	// Linekd List test for std::string
+	// Linked List test for std::string
+	if (true)
 	{
 		list<std::string> strList;
 
@@ -104,6 +105,21 @@ int main(void)
 		assert(*it3 == "christmas");
 		it3++;
 		assert(it3 == strList.end());
+	}
+
+	// int
+	if (true)
+	{
+		list<int> nums;
+		nums.push_back(5);
+		nums.push_back(10);
+		nums.push_back(5002340);
+		nums.push_back(14817239);
+
+		int a = nums.front();
+		int b = nums.back();
+		assert(a == 5);
+		assert(b == 14817239);
 	}
 
 	std::cout << "test pass\n";
