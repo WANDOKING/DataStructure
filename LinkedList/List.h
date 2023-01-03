@@ -12,7 +12,7 @@ namespace mds
 	private:
 		struct Node
 		{
-			T Data;
+			T Data {};
 			Node* Prev{};
 			Node* Next{};
 		};
@@ -105,7 +105,7 @@ namespace mds
 			return mTail.Prev->Data;
 		}
 
-		inline void push_front(T data)
+		void push_front(T data)
 		{
 			Node* newNode = new Node;
 			newNode->Data = data;
@@ -118,7 +118,7 @@ namespace mds
 			++mSize;
 		}
 
-		inline void push_back(T data)
+		void push_back(T data)
 		{
 			Node* newNode = new Node;
 			newNode->Data = data;
@@ -131,7 +131,7 @@ namespace mds
 			++mSize;
 		}
 
-		inline void pop_front()
+		void pop_front()
 		{
 			assert(mSize > 0);
 
@@ -143,7 +143,7 @@ namespace mds
 			--mSize;
 		}
 
-		inline void pop_back()
+		void pop_back()
 		{
 			assert(mSize > 0);
 
@@ -155,7 +155,7 @@ namespace mds
 			--mSize;
 		}
 
-		inline void clear()
+		void clear()
 		{
 			Node* deleteNode = mHead.Next;
 			Node* nextNode = deleteNode->Next;
@@ -173,7 +173,7 @@ namespace mds
 			mSize = 0;
 		}
 
-		inline iterator erase(iterator iter)
+		iterator erase(iterator iter)
 		{
 			assert(iter.mNode != nullptr);
 			assert(iter.mNode != &mHead);
@@ -192,7 +192,7 @@ namespace mds
 			return ret;
 		}
 
-		inline void remove(T data)
+		void remove(T data)
 		{
 			Node* visit = mHead.Next;
 
