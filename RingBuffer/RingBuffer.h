@@ -1,4 +1,4 @@
-// version 1.0.0
+// version 1.0.1
 #pragma once
 
 #include <cstring>
@@ -6,10 +6,21 @@
 class RingBuffer
 {
 public:
+	RingBuffer()
+		: mCapacity(DEFAULT_SIZE)
+	{
+		mBuffer = new char[DEFAULT_SIZE];
+	}
+
 	RingBuffer(int bufferSize)
 		: mCapacity(bufferSize)
 	{
 		mBuffer = new char[bufferSize];
+	}
+
+	~RingBuffer()
+	{
+		delete[] mBuffer;
 	}
 
 	inline int GetCapacity(void) const
@@ -171,6 +182,11 @@ public:
 		return true;
 	}
 private:
+	enum
+	{
+		DEFAULT_SIZE = 1024
+	};
+
 	char* mBuffer;
 	int mCapacity;
 	int mSize = 0;
