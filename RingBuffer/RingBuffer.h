@@ -1,3 +1,4 @@
+// version 1.0.0
 #pragma once
 
 #include <cstring>
@@ -5,138 +6,174 @@
 class RingBuffer
 {
 public:
-    RingBuffer(int bufferSize)
-        : mCapacity(bufferSize)
-    {
-        mBuffer = new char[bufferSize];
-    }
+	RingBuffer(int bufferSize)
+		: mCapacity(bufferSize)
+	{
+		mBuffer = new char[bufferSize];
+	}
 
-    // ÌòÑÏû¨ ÏÇ¨Ïö©Ï§ëÏù∏ Ïö©Îüâ ÏñªÍ∏∞
-    inline int GetUseSize(void) const
-    {
-        return mSize;
-    }
+	inline int GetCapacity(void) const
+	{
+		return mCapacity;
+	}
 
-    // ÌòÑÏû¨ Î≤ÑÌçºÏóê ÎÇ®ÏùÄ Ïö©Îüâ ÏñªÍ∏∞
-    inline int GetFreeSize(void) const
-    {
-        return mCapacity - mSize;
-    }
+	// «ˆ¿Á ªÁøÎ¡ﬂ¿Œ øÎ∑Æ æÚ±‚ (GetSize)
+	inline int GetUseSize(void) const
+	{
+		return mSize;
+	}
 
-    // Î≤ÑÌçº Ìè¨Ïù∏ÌÑ∞Î°ú Ïô∏Î∂ÄÏóêÏÑú ÌïúÎ∞©Ïóê Ïì∏ Ïàò ÏûàÎäî Í∏∏Ïù¥
-    inline int GetDirectEnqueueSize(void) const
-    {
-        int freeSize = GetFreeSize();
-        return (mCapacity - mRear) < freeSize ? (mCapacity - mRear) : freeSize;
-    }
+	// «ˆ¿Á πˆ∆€ø° ≥≤¿∫ øÎ∑Æ æÚ±‚
+	inline int GetFreeSize(void) const
+	{
+		return mCapacity - mSize;
+	}
 
-    // Î≤ÑÌçº Ìè¨Ïù∏ÌÑ∞Î°ú Ïô∏Î∂ÄÏóêÏÑú ÌïúÎ∞©Ïóê ÏùΩÏùÑ Ïàò ÏûàÎäî Í∏∏Ïù¥
-    inline int GetDirectDequeueSize(void) const
-    {
-        int useSize = GetUseSize();
-        return (mCapacity - mFront) < useSize ? (mCapacity - mFront) : useSize;
-    }
+	// πˆ∆€ ∆˜¿Œ≈Õ∑Œ ø‹∫Œø°º≠ «—πÊø° æµ ºˆ ¿÷¥¬ ±Ê¿Ã
+	inline int GetDirectEnqueueSize(void) const
+	{
+		int freeSize = GetFreeSize();
+		return (mCapacity - mRear) < freeSize ? (mCapacity - mRear) : freeSize;
+	}
 
-    bool Enqueue(const char* data, int dataSize)
-    {
-        int freeSize = GetFreeSize();
-        int directEnqueueSize = GetDirectEnqueueSize();
-        if (freeSize < dataSize)
-        {
-            return false;
-        }
+	// πˆ∆€ ∆˜¿Œ≈Õ∑Œ ø‹∫Œø°º≠ «—πÊø° ¿–¿ª ºˆ ¿÷¥¬ ±Ê¿Ã
+	inline int GetDirectDequeueSize(void) const
+	{
+		int useSize = GetUseSize();
+		return (mCapacity - mFront) < useSize ? (mCapacity - mFront) : useSize;
+	}
 
-        char* enqueuePosition = mBuffer + mRear;
+	bool Enqueue(const char* data, int dataSize)
+	{
+		int freeSize = GetFreeSize();
+		int directEnqueueSize = GetDirectEnqueueSize();
+		if (freeSize < dataSize)
+		{
+			return false;
+		}
 
-        if (directEnqueueSize >= dataSize)
-        {
-            memcpy(enqueuePosition, data, dataSize);
-        }
-        else
-        {
-            int firstEnqueueSize = directEnqueueSize;
-            int secondEnqueueSize = dataSize - directEnqueueSize;
-            memcpy(enqueuePosition, data, firstEnqueueSize);
-            memcpy(mBuffer, data + firstEnqueueSize, secondEnqueueSize);
-        }
+		char* enqueuePosition = mBuffer + mRear;
 
-        mSize += dataSize;
-        mRear = (mRear + dataSize) % mCapacity;
+		if (directEnqueueSize >= dataSize)
+		{
+			memcpy(enqueuePosition, data, dataSize);
+		}
+		else
+		{
+			int firstEnqueueSize = directEnqueueSize;
+			int secondEnqueueSize = dataSize - directEnqueueSize;
+			memcpy(enqueuePosition, data, firstEnqueueSize);
+			memcpy(mBuffer, data + firstEnqueueSize, secondEnqueueSize);
+		}
 
-        return true;
-    }
+		mSize += dataSize;
+		mRear = (mRear + dataSize) % mCapacity;
 
-    bool Dequeue(char* data, int dataSize)
-    {
-        int useSize = GetUseSize();
-        int directDequeueSize = GetDirectDequeueSize();
-        if (useSize < dataSize)
-        {
-            return false;
-        }
+		return true;
+	}
 
-        char* dequeuePosition = mBuffer + mFront;
+	bool Dequeue(char* data, int dataSize)
+	{
+		int useSize = GetUseSize();
+		int directDequeueSize = GetDirectDequeueSize();
+		if (useSize < dataSize)
+		{
+			return false;
+		}
 
-        if (directDequeueSize >= dataSize)
-        {
-            memcpy(data, dequeuePosition, dataSize);
-        }
-        else
-        {
-            int firstDequeueSize = directDequeueSize;
-            int secondDequeueSize = dataSize - directDequeueSize;
-            memcpy(data, dequeuePosition, firstDequeueSize);
-            memcpy(data + firstDequeueSize, mBuffer, secondDequeueSize);
-        }
+		char* dequeuePosition = mBuffer + mFront;
 
-        mSize -= dataSize;
-        mFront = (mFront + dataSize) % mCapacity;
+		if (directDequeueSize >= dataSize)
+		{
+			memcpy(data, dequeuePosition, dataSize);
+		}
+		else
+		{
+			int firstDequeueSize = directDequeueSize;
+			int secondDequeueSize = dataSize - directDequeueSize;
+			memcpy(data, dequeuePosition, firstDequeueSize);
+			memcpy(data + firstDequeueSize, mBuffer, secondDequeueSize);
+		}
 
-        return true;
-    }
+		mSize -= dataSize;
+		mFront = (mFront + dataSize) % mCapacity;
 
-    bool Peek(char* data, int dataSize) const
-    {
-        int useSize = GetUseSize();
-        int directDequeueSize = GetDirectDequeueSize();
-        if (useSize < dataSize)
-        {
-            return false;
-        }
+		return true;
+	}
 
-        char* peekPosition = mBuffer + mFront;
+	bool Peek(char* data, int dataSize) const
+	{
+		int useSize = GetUseSize();
+		int directDequeueSize = GetDirectDequeueSize();
+		if (useSize < dataSize)
+		{
+			return false;
+		}
 
-        if (directDequeueSize >= dataSize)
-        {
-            memcpy(data, peekPosition, dataSize);
-        }
-        else
-        {
-            int firstPeekSize = directDequeueSize;
-            int secondPeekSize = dataSize - directDequeueSize;
-            memcpy(data, peekPosition, firstPeekSize);
-            memcpy(data + firstPeekSize, mBuffer, secondPeekSize);
-        }
+		char* peekPosition = mBuffer + mFront;
 
-        return true;
-    }
+		if (directDequeueSize >= dataSize)
+		{
+			memcpy(data, peekPosition, dataSize);
+		}
+		else
+		{
+			int firstPeekSize = directDequeueSize;
+			int secondPeekSize = dataSize - directDequeueSize;
+			memcpy(data, peekPosition, firstPeekSize);
+			memcpy(data + firstPeekSize, mBuffer, secondPeekSize);
+		}
 
-    inline void ClearBuffer(void)
-    {
-        mSize = 0;
-        mRear = mFront;
-    }
+		return true;
+	}
 
-    // int DirectEnqueueSize(void);	
-    // int DirectDequeueSize(void);
-    // int MoveFront(int Size);
-    // int MoveRear(int Size);
-    // char* GetFrontBufferPtr(void);
-    // char* GetRearBufferPtr(void);
+	inline void ClearBuffer(void)
+	{
+		mSize = 0;
+		mRear = mFront;
+	}
+
+	inline char* GetFrontBufferPtr(void) const
+	{
+		return mBuffer + mFront;
+	}
+
+	inline char* GetRearBufferPtr(void) const
+	{
+		return mBuffer + mRear;
+	}
+
+	// Front ∞≠¡¶ ¿Ãµø(ªË¡¶), ¿Ãµø º∫∞¯ ø©∫Œ∏¶ π›»Ø
+	inline bool MoveFront(int Size)
+	{
+		if (GetUseSize() < Size)
+		{
+			return false;
+		}
+
+		mSize -= Size;
+		mFront = (mFront + Size) % mCapacity;
+
+		return true;
+	}
+
+	// Rear ∞≠¡¶ ¿Ãµø(π´¿«πÃ«— ø‰º“ ª¿‘), ¿Ãµø º∫∞¯ ø©∫Œ∏¶ π›»Ø
+	inline bool MoveRear(int Size)
+	{
+		if (GetFreeSize() < Size)
+		{
+			return false;
+		}
+
+		mSize += Size;
+		mRear = (mRear + Size) % mCapacity;
+
+		return true;
+	}
 private:
-    char* mBuffer;
-    int mCapacity;
-    int mSize = 0;
-    int mFront = 0;
-    int mRear = 0;
+	char* mBuffer;
+	int mCapacity;
+	int mSize = 0;
+	int mFront = 0;
+	int mRear = 0;
 };
