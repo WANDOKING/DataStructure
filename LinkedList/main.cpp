@@ -1,127 +1,106 @@
-#include <cassert>
 #include <iostream>
-
-// define USE_STD to use STL list.
-// the way to use this list is the same as std::list container
-//#define USE_STD
-
-#ifdef USE_STD
 #include <list>
-using namespace std;
-#else
+#include <random>
+
 #include "List.h"
-using namespace mds;
-#endif
+
+enum class EListOperation
+{
+	CLEAR,
+	ERASE,
+	POP_BACK,
+	POP_FRONT,
+	PUSH_BACK,
+	PUSH_FRONT,
+	REMOVE,
+	MAX_VALUE
+};
 
 int main(void)
 {
-	// Linked List test for std::string
+	// randomTest
 	if (true)
 	{
-		list<std::string> strList;
+		const int RANDOM_SEED = 150;
+		const int TEST_COUNT = INT_MAX;
 
-		strList.push_back("hello world");
-		strList.push_front("ok");
+		std::list<int> listSTL;
+		mds::list<int> listMDS;
 
-		assert(strList.size() == 2);
-		assert(strList.front() == "ok");
-		assert(strList.back() == "hello world");
-
-		// clear
-		strList.clear();
-		assert(strList.size() == 0);
-
-		strList.push_back("who are you");
-		strList.push_back("we can go");
-		strList.push_back("tree");
-		strList.push_front("coffee");
-
-		// traversal
-		assert(strList.size() == 4);
-		auto it = strList.begin();
-		assert(*it == "coffee");
-		++it;
-		assert(*it == "who are you");
-		++it;
-		assert(*it == "we can go");
-		++it;
-		assert(*it == "tree");
-		++it;
-		assert(it == strList.end());
-
-		// remove
-		strList.remove("we can go");
-		strList.push_back("hood");
-		strList.remove("tree");
-
-		assert(strList.size() == 3);
-		auto it2 = strList.begin();
-		assert(*it2 == "coffee");
-		it2++;
-		assert(*it2 == "who are you");
-		it2++;
-		assert(*it2 == "hood");
-		it2++;
-		assert(it2 == strList.end());
-
-		// clear
-		strList.clear();
-		assert(strList.size() == 0);
-
-		// erase
-		strList.push_back("its");
-		strList.push_back("beginning");
-		strList.push_back("to");
-		strList.push_back("look");
-		strList.push_back("a");
-		strList.push_back("lot");
-		strList.push_back("like");
-		strList.push_back("christmas");
-		assert(strList.size() == 8);
-		
-		for (auto it = strList.begin(); it != strList.end(); ++it)
+		srand(RANDOM_SEED);
+		int testCount = 0;
+		while (testCount <= TEST_COUNT)
 		{
-			if (*it == "to")
+			if (testCount % 100000 == 0) printf("testCount = %d\n", testCount);
+			testCount++;
+
+			// validation check
+			assert(listSTL.size() == listMDS.size());
+			assert(listSTL.empty() == listMDS.empty());
+			if (listSTL.empty() == false)
 			{
-				it = strList.erase(it);
-				it = strList.erase(it);
+				assert(listSTL.back() == listMDS.back());
+				assert(listSTL.front() == listMDS.front());
 			}
 
-			if (*it == "lot")
+			std::list<int>::iterator iteratorSTL = listSTL.begin();
+			mds::list<int>::iterator iteratorMDS = listMDS.begin();
+
+			while (true)
 			{
-				it = strList.erase(it);
-				it = strList.erase(it);
+				if (iteratorSTL == listSTL.end())
+				{
+					assert(iteratorMDS == listMDS.end());
+					break;
+				}
+
+				assert(*iteratorSTL == *iteratorMDS);
+				iteratorSTL++;
+				iteratorMDS++;
+			}
+
+			// random operation
+			EListOperation operation = (EListOperation)(rand() % (int)EListOperation::MAX_VALUE);
+			int randomNumber;
+
+			switch (operation)
+			{
+			case EListOperation::CLEAR:
+				break;
+			case EListOperation::ERASE:
+				break;
+			case EListOperation::POP_BACK:
+				if (listMDS.empty() == false)
+				{
+					listMDS.pop_back();
+					listSTL.pop_back();
+				}
+				break;
+			case EListOperation::POP_FRONT:
+				if (listMDS.empty() == false)
+				{
+					listMDS.pop_front();
+					listSTL.pop_front();
+				}
+				break;
+			case EListOperation::PUSH_BACK:
+				randomNumber = rand();
+				listMDS.push_back(randomNumber);
+				listSTL.push_back(randomNumber);
+				break;
+			case EListOperation::PUSH_FRONT:
+				randomNumber = rand();
+				listMDS.push_front(randomNumber);
+				listSTL.push_front(randomNumber);
+				break;
+			case EListOperation::REMOVE:
+				break;
+			default:
+				assert(false);
 			}
 		}
-
-		assert(strList.size() == 4);
-		auto it3 = strList.begin();
-		assert(*it3 == "its");
-		it3++;
-		assert(*it3 == "beginning");
-		it3++;
-		assert(*it3 == "a");
-		it3++;
-		assert(*it3 == "christmas");
-		it3++;
-		assert(it3 == strList.end());
 	}
 
-	// int
-	if (true)
-	{
-		list<int> nums;
-		nums.push_back(5);
-		nums.push_back(10);
-		nums.push_back(5002340);
-		nums.push_back(14817239);
-
-		int a = nums.front();
-		int b = nums.back();
-		assert(a == 5);
-		assert(b == 14817239);
-	}
-
-	std::cout << "test pass\n";
+	printf("Test Passed\n");
 	_CrtDumpMemoryLeaks();
 }
