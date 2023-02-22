@@ -1,4 +1,4 @@
-// version 1.0.1
+// version 1.0.2
 #pragma once
 
 #include <cstring>
@@ -28,26 +28,26 @@ public:
 		return mCapacity;
 	}
 
-	// ÇöÀç »ç¿ëÁßÀÎ ¿ë·® ¾ò±â (GetSize)
+	// í˜„ì¬ ì‚¬ìš©ì¤‘ì¸ ìš©ëŸ‰ ì–»ê¸° (GetSize)
 	inline int GetUseSize(void) const
 	{
 		return mSize;
 	}
 
-	// ÇöÀç ¹öÆÛ¿¡ ³²Àº ¿ë·® ¾ò±â
+	// í˜„ì¬ ë²„í¼ì— ë‚¨ì€ ìš©ëŸ‰ ì–»ê¸°
 	inline int GetFreeSize(void) const
 	{
 		return mCapacity - mSize;
 	}
 
-	// ¹öÆÛ Æ÷ÀÎÅÍ·Î ¿ÜºÎ¿¡¼­ ÇÑ¹æ¿¡ ¾µ ¼ö ÀÖ´Â ±æÀÌ
+	// ë²„í¼ í¬ì¸í„°ë¡œ ì™¸ë¶€ì—ì„œ í•œë°©ì— ì“¸ ìˆ˜ ìˆëŠ” ê¸¸ì´
 	inline int GetDirectEnqueueSize(void) const
 	{
 		int freeSize = GetFreeSize();
 		return (mCapacity - mRear) < freeSize ? (mCapacity - mRear) : freeSize;
 	}
 
-	// ¹öÆÛ Æ÷ÀÎÅÍ·Î ¿ÜºÎ¿¡¼­ ÇÑ¹æ¿¡ ÀĞÀ» ¼ö ÀÖ´Â ±æÀÌ
+	// ë²„í¼ í¬ì¸í„°ë¡œ ì™¸ë¶€ì—ì„œ í•œë°©ì— ì½ì„ ìˆ˜ ìˆëŠ” ê¸¸ì´
 	inline int GetDirectDequeueSize(void) const
 	{
 		int useSize = GetUseSize();
@@ -154,7 +154,7 @@ public:
 		return mBuffer + mRear;
 	}
 
-	// Front °­Á¦ ÀÌµ¿(»èÁ¦), ÀÌµ¿ ¼º°ø ¿©ºÎ¸¦ ¹İÈ¯
+	// Front ê°•ì œ ì´ë™(ì‚­ì œ), ì´ë™ ì„±ê³µ ì—¬ë¶€ë¥¼ ë°˜í™˜
 	inline bool MoveFront(int Size)
 	{
 		if (GetUseSize() < Size)
@@ -168,7 +168,7 @@ public:
 		return true;
 	}
 
-	// Rear °­Á¦ ÀÌµ¿(¹«ÀÇ¹ÌÇÑ ¿ä¼Ò »ğÀÔ), ÀÌµ¿ ¼º°ø ¿©ºÎ¸¦ ¹İÈ¯
+	// Rear ê°•ì œ ì´ë™(ë¬´ì˜ë¯¸í•œ ìš”ì†Œ ì‚½ì…), ì´ë™ ì„±ê³µ ì—¬ë¶€ë¥¼ ë°˜í™˜
 	inline bool MoveRear(int Size)
 	{
 		if (GetFreeSize() < Size)
@@ -181,11 +181,13 @@ public:
 
 		return true;
 	}
-private:
+
 	enum
 	{
-		DEFAULT_SIZE = 1024
+		DEFAULT_SIZE = 10000
 	};
+
+private:
 
 	char* mBuffer;
 	int mCapacity;
