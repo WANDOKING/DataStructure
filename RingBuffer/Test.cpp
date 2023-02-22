@@ -42,11 +42,11 @@ int main(void)
 		}
 	}
 
-	// ÀüÃ¼ÀûÀÎ ¸¶±¸ÀâÀÌ Å×½ºÆ® - version 1.0.0 ¿¡¼­ ÀÛ¼ºµÇ¾úÀ½
+	// ì „ì²´ì ì¸ ë§ˆêµ¬ìž¡ì´ í…ŒìŠ¤íŠ¸ - version 1.0.2 í…ŒìŠ¤íŠ¸ í†µê³¼
 	if (false)
 	{
-		const int TEST_BUFFER_SIZE = 200; // º¯°æÇÏ¸é¼­ Å×½ºÆ®ÇÏÁø ¸» °Í
-		const int RING_BUFFER_SIZE = 50; // º¯°æÇÏ¸é¼­ Å×½ºÆ®ÇÏÁø ¸» °Í
+		const int TEST_BUFFER_SIZE = 200; // ë³€ê²½í•˜ë©´ì„œ í…ŒìŠ¤íŠ¸í•˜ì§„ ë§ ê²ƒ
+		const int RING_BUFFER_SIZE = 50; // ë³€ê²½í•˜ë©´ì„œ í…ŒìŠ¤íŠ¸í•˜ì§„ ë§ ê²ƒ
 		char testBuffer[TEST_BUFFER_SIZE];
 		RingBuffer ringBuffer(RING_BUFFER_SIZE);
 		bool returnValue;
