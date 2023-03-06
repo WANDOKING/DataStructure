@@ -1,6 +1,8 @@
 // version 1.0.0
 #pragma once
 
+#include <cstring>
+
 class Serializer
 {
 public:
@@ -67,6 +69,19 @@ public:
 	}
 
 	// operator overloading - serializing
+	inline Serializer& operator<<(unsigned char value)
+	{
+		if (GetFreeSize() < sizeof(unsigned char))
+		{
+			intentionalCrash();
+		}
+
+		*(unsigned char*)(mBuffer + mSize) = value;
+		mSize += sizeof(unsigned char);
+
+		return *this;
+	}
+
 	inline Serializer& operator<<(char value)
 	{
 		if (GetFreeSize() < sizeof(char))
@@ -76,6 +91,19 @@ public:
 
 		*(char*)(mBuffer + mSize) = value;
 		mSize += sizeof(char);
+
+		return *this;
+	}
+
+	inline Serializer& operator<<(unsigned short value)
+	{
+		if (GetFreeSize() < sizeof(unsigned short))
+		{
+			intentionalCrash();
+		}
+
+		*(unsigned short*)(mBuffer + mSize) = value;
+		mSize += sizeof(unsigned short);
 
 		return *this;
 	}
@@ -93,6 +121,19 @@ public:
 		return *this;
 	}
 
+	inline Serializer& operator<<(unsigned int value)
+	{
+		if (GetFreeSize() < sizeof(unsigned int))
+		{
+			intentionalCrash();
+		}
+
+		*(unsigned int*)(mBuffer + mSize) = value;
+		mSize += sizeof(unsigned int);
+
+		return *this;
+	}
+
 	inline Serializer& operator<<(int value)
 	{
 		if (GetFreeSize() < sizeof(int))
@@ -106,6 +147,19 @@ public:
 		return *this;
 	}
 
+	inline Serializer& operator<<(unsigned long value)
+	{
+		if (GetFreeSize() < sizeof(unsigned long))
+		{
+			intentionalCrash();
+		}
+
+		*(unsigned long*)(mBuffer + mSize) = value;
+		mSize += sizeof(unsigned long);
+
+		return *this;
+	}
+
 	inline Serializer& operator<<(long value)
 	{
 		if (GetFreeSize() < sizeof(long))
@@ -115,6 +169,19 @@ public:
 
 		*(long *)(mBuffer + mSize) = value;
 		mSize += sizeof(long);
+
+		return *this;
+	}
+
+	inline Serializer& operator<<(unsigned long long value)
+	{
+		if (GetFreeSize() < sizeof(unsigned long long))
+		{
+			intentionalCrash();
+		}
+
+		*(unsigned long long*)(mBuffer + mSize) = value;
+		mSize += sizeof(unsigned long long);
 
 		return *this;
 	}
@@ -159,6 +226,19 @@ public:
 	}
 
 	// operator overloading - marshaling
+	inline Serializer& operator>>(unsigned char& value)
+	{
+		if (GetUseSize() < sizeof(unsigned char))
+		{
+			intentionalCrash();
+		}
+
+		value = *(unsigned char*)(mBuffer + mSize - sizeof(unsigned char));
+		mSize -= sizeof(unsigned char);
+
+		return *this;
+	}
+
 	inline Serializer& operator>>(char& value)
 	{
 		if (GetUseSize() < sizeof(char))
@@ -168,6 +248,19 @@ public:
 
 		value = *(char*)(mBuffer + mSize - sizeof(char));
 		mSize -= sizeof(char);
+
+		return *this;
+	}
+
+	inline Serializer& operator>>(unsigned short& value)
+	{
+		if (GetUseSize() < sizeof(unsigned short))
+		{
+			intentionalCrash();
+		}
+
+		value = *(unsigned short*)(mBuffer + mSize - sizeof(unsigned short));
+		mSize -= sizeof(unsigned short);
 
 		return *this;
 	}
@@ -185,6 +278,19 @@ public:
 		return *this;
 	}
 
+	inline Serializer& operator>>(unsigned int& value)
+	{
+		if (GetUseSize() < sizeof(unsigned int))
+		{
+			intentionalCrash();
+		}
+
+		value = *(unsigned int*)(mBuffer + mSize - sizeof(unsigned int));
+		mSize -= sizeof(unsigned int);
+
+		return *this;
+	}
+
 	inline Serializer& operator>>(int& value)
 	{
 		if (GetUseSize() < sizeof(int))
@@ -198,6 +304,19 @@ public:
 		return *this;
 	}
 
+	inline Serializer& operator>>(unsigned long& value)
+	{
+		if (GetUseSize() < sizeof(unsigned long))
+		{
+			intentionalCrash();
+		}
+
+		value = *(unsigned long*)(mBuffer + mSize - sizeof(unsigned long));
+		mSize -= sizeof(unsigned long);
+
+		return *this;
+	}
+
 	inline Serializer& operator>>(long& value)
 	{
 		if (GetUseSize() < sizeof(long))
@@ -207,6 +326,19 @@ public:
 
 		value = *(long*)(mBuffer + mSize - sizeof(long));
 		mSize -= sizeof(long);
+
+		return *this;
+	}
+
+	inline Serializer& operator>>(unsigned long long& value)
+	{
+		if (GetUseSize() < sizeof(unsigned long long))
+		{
+			intentionalCrash();
+		}
+
+		value = *(unsigned long long*)(mBuffer + mSize - sizeof(unsigned long long));
+		mSize -= sizeof(unsigned long long);
 
 		return *this;
 	}
