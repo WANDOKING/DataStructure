@@ -1,4 +1,4 @@
-// version 1.0.0
+// version 1.0.1
 #pragma once
 
 #include <cstring>
@@ -30,6 +30,11 @@ public:
 	inline int GetUseSize()
 	{
 		return mSize;
+	}
+
+	inline void SetUseSize(int size)
+	{
+		mSize = size;
 	}
 
 	inline int GetFreeSize()
