@@ -1,7 +1,13 @@
-// version 1.0.1
+// version 1.1.0
 #pragma once
 
 #include <cstring>
+
+#define _USE_DEFAULT_CHAR_SERIALIZING
+
+#ifdef _USE_DEFAULT_CHAR_SERIALIZING
+typedef wchar_t WCHAR;
+#endif
 
 class Serializer
 {
@@ -172,7 +178,7 @@ public:
 			intentionalCrash();
 		}
 
-		*(long *)(mBuffer + mSize) = value;
+		*(long*)(mBuffer + mSize) = value;
 		mSize += sizeof(long);
 
 		return *this;
@@ -230,7 +236,27 @@ public:
 		return *this;
 	}
 
-	// operator overloading - marshaling
+#ifdef _USE_DEFAULT_CHAR_SERIALIZING
+	inline Serializer& operator<<(const char* str)
+	{
+		int length = static_cast<int>(strlen(str));
+		InsertByte(str, (int)(length * sizeof(char)));
+		operator<<(length);
+
+		return *this;
+	}
+
+	inline Serializer& operator<<(const WCHAR* str)
+	{
+		int length = static_cast<int>(wcslen(str));
+		InsertByte((const char*)str, (int)(length * sizeof(WCHAR)));
+		operator<<(length);
+
+		return *this;
+	}
+#endif
+
+	// operator overloading - deserializing
 	inline Serializer& operator>>(unsigned char& value)
 	{
 		if (GetUseSize() < sizeof(unsigned char))
@@ -387,6 +413,53 @@ public:
 		return *this;
 	}
 
+#ifdef _USE_DEFAULT_CHAR_SERIALIZING
+	inline Serializer& operator>>(char* str)
+	{
+		int useSize = GetUseSize();
+		if (useSize < sizeof(int))
+		{
+			intentionalCrash();
+		}
+
+		int length;
+		operator>>(length);
+		length *= sizeof(char);
+		if (useSize < length)
+		{
+			intentionalCrash();
+		}
+
+		memcpy(str, mBuffer + mSize - length, length);
+		str[length / sizeof(char)] = '\0';
+		mSize -= length;
+
+		return *this;
+	}
+
+	inline Serializer& operator>>(WCHAR* str)
+	{
+		int useSize = GetUseSize();
+		if (useSize < sizeof(int))
+		{
+			intentionalCrash();
+		}
+
+		int length;
+		operator>>(length);
+		length *= sizeof(WCHAR);
+		if (useSize < length)
+		{
+			intentionalCrash();
+		}
+
+		memcpy(str, mBuffer + mSize - length, length);
+		str[length / sizeof(WCHAR)] = L'\0';
+		mSize -= length;
+
+		return *this;
+	}
+#endif
 	enum
 	{
 		DEFAULT_SIZE = 1500
